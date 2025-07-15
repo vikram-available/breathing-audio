@@ -1,0 +1,5 @@
+# ─── ignore local playground files ─────────────────────────────
+test-face-detection.html
+test-face-inline.html
+duplicate_index-copy.html
+# ─── ignore local build files ────────────────────────────────

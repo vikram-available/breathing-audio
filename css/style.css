@@ -1,0 +1,135 @@
+body {
+  font-family: Arial, sans-serif;
+  background: linear-gradient(to bottom, #dbeafe, #93c5fd);
+  margin: 0;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  transition: background 4s ease-in-out, color 2s ease-in-out;
+}
+body.dark {
+  background: linear-gradient(to bottom, #111827, #1f2937);
+  color: #f9fafb;
+}
+
+#roundSelector {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  align-items: center;
+  background: rgba(255,255,255,0.8);
+  padding: 5px 10px;
+  border-radius: 4px;
+  transition: opacity 1s ease-in-out, background 2s ease-in-out, color 2s ease-in-out;
+}
+body.dark #roundSelector {
+  background: rgba(31,41,55,0.8);
+}
+#roundSelector label,
+#roundSelector #roundStatus {
+  color: #1e3a8a;
+  transition: color 2s ease-in-out;
+}
+body.dark #roundSelector label,
+body.dark #roundSelector #roundStatus {
+  color: #facc15;
+}
+#roundSelector input {
+  width: 60px;
+  padding: 5px;
+  font-size: 0.9rem;
+  margin: 0 10px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  background: white;
+  color: black;
+  transition: background 2s ease-in-out, color 2s ease-in-out;
+}
+body.dark #roundSelector input {
+  background: #374151;
+  color: #f9fafb;
+  border: 1px solid #555;
+}
+
+h1 {
+  margin-bottom: 10px;
+  opacity: 1;
+  transition: opacity 2s ease-in-out;
+}
+#timer {
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+  color: #1e3a8a;
+  transition: color 2s ease-in-out;
+}
+body.dark #timer {
+  color: #facc15;
+}
+#circle {
+  width: 200px;
+  height: 200px;
+  margin: 40px 0;
+  border-radius: 50%;
+  background-color: #3b82f6;
+  opacity: 0.8;
+  transition: all 4s ease-in-out, background-color 1s ease-in-out;
+  transform: scale(1);
+}
+#instruction {
+  margin-top: 30px;
+  font-size: 1.5rem;
+  font-weight: bold;
+  opacity: 1;
+  transition: opacity 1.5s ease-in-out;
+}
+button {
+  margin: 10px;
+  padding: 10px 20px;
+  font-size: 1rem;
+  cursor: pointer;
+  background-color: #1e40af;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  transition: opacity 2s ease-in-out;
+}
+#startBtn { opacity: 1; }
+#soundToggle {
+  padding: 8px;
+  font-size: 1.2rem;
+  width: 40px;
+  height: 40px;
+  margin-left: 5px;
+  background-color: transparent;
+  color: #1e40af;
+  border: none;
+  border-radius: 50%;
+  transition: color 2s ease-in-out;
+}
+.buttons {
+  margin-top: 40px;
+  display: flex;
+  align-items: center;
+}
+#progress span {
+  opacity: 0;
+  transform: scale(0.5);
+  animation: fadeInScale 0.6s ease-out forwards;
+}
+@keyframes fadeInScale {
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+@media (max-width: 600px) {
+  #circle { width: 140px; height: 140px; margin: 30px 0; }
+  h1 { font-size: 1.4rem; }
+  #instruction { font-size: 1.2rem; }
+  button { font-size: 0.9rem; padding: 8px 16px; }
+  #progress span { font-size: 1.2rem; }
+}

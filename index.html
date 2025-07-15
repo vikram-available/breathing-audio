@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>4-7-8 Breathing Practice</title>
+
+  <style>
+    /* ---------- original CSS ---------- */
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to bottom, #dbeafe, #93c5fd);
+      margin: 0;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      transition: background 4s ease-in-out, color 2s ease-in-out;
+    }
+    body.dark {
+      background: linear-gradient(to bottom, #111827, #1f2937);
+      color: #f9fafb;
+    }
+
+    /* ── round selector ───────────────────────────── */
+    #roundSelector {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      display: flex;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.8);
+      padding: 5px 10px;
+      border-radius: 4px;
+      transition: opacity 1s ease-in-out, background 2s ease-in-out, color 2s ease-in-out;
+    }
+    body.dark #roundSelector {
+      background: rgba(31, 41, 55, 0.8);
+    }
+    #roundSelector label,
+    #roundSelector #roundStatus {
+      color: #1e3a8a;
+      transition: color 2s ease-in-out;
+    }
+    body.dark #roundSelector label,
+    body.dark #roundSelector #roundStatus {
+      color: #facc15;
+    }
+    #roundSelector input {
+      width: 60px;
+      padding: 5px;
+      font-size: 0.9rem;
+      margin: 0 10px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      background: white;
+      color: black;
+      transition: background 2s ease-in-out, color 2s ease-in-out;
+    }
+    body.dark #roundSelector input {
+      background: #374151;
+      color: #f9fafb;
+      border: 1px solid #555;
+    }
+
+    /* ── headings / timer ─────────────────────────── */
+    h1 {
+      margin-bottom: 10px;
+      opacity: 1;
+      transition: opacity 2s ease-in-out;
+    }
+    #timer {
+      font-size: 1.2rem;
+      margin-bottom: 10px;
+      color: #1e3a8a;
+      transition: color 2s ease-in-out;
+    }
+    body.dark #timer {
+      color: #facc15;
+    }
+
+    /* ── breathing circle ─────────────────────────── */
+    #circle {
+      width: 200px;
+      height: 200px;
+      margin: 40px 0;
+      border-radius: 50%;
+      background-color: #3b82f6;
+      opacity: 0.8;
+      transform: scale(1);
+      transition: all 4s ease-in-out, background-color 1s ease-in-out;
+    }
+
+    #instruction {
+      margin-top: 30px;
+      font-size: 1.5rem;
+      font-weight: bold;
+      opacity: 1;
+      transition: opacity 1.5s ease-in-out;
+    }
+
+    /* ── buttons ──────────────────────────────────── */
+    button {
+      margin: 10px;
+      padding: 10px 20px;
+      font-size: 1rem;
+      cursor: pointer;
+      background-color: #1e40af;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      transition: opacity 2s ease-in-out;
+    }
+    #startBtn {
+      opacity: 1;
+    }
+    #soundToggle {
+      padding: 8px;
+      font-size: 1.2rem;
+      width: 40px;
+      height: 40px;
+      margin-left: 5px;
+      background: transparent;
+      color: #1e40af;
+      border: none;
+      border-radius: 50%;
+      transition: color 2s ease-in-out;
+    }
+    .buttons {
+      margin-top: 40px;
+      display: flex;
+      align-items: center;
+    }
+
+    /* progress dots */
+    #progress span {
+      opacity: 0;
+      transform: scale(0.5);
+      animation: fadeInScale 0.6s ease-out forwards;
+    }
+    @keyframes fadeInScale {
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    /* ── responsive tweaks ────────────────────────── */
+    @media (max-width: 600px) {
+      #circle { width: 140px; height: 140px; margin: 30px 0; }
+      h1 { font-size: 1.4rem; }
+      #instruction { font-size: 1.2rem; }
+      button { font-size: 0.9rem; padding: 8px 16px; }
+      #progress span { font-size: 1.2rem; }
+    }
+
+    /* ── webcam feed & overlay ────────────────────── */
+    #webcam {
+      margin-top: 20px;
+      border: 3px solid #1e40af;
+      border-radius: 12px;
+      box-shadow: 0 0 10px #1e40af88;
+      width: 320px;
+      height: 240px;
+    }
+    canvas.face-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 320px;
+      height: 240px;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+  <!-- ─────────────────────────────────────────────── -->
+  <!--                UI  MARK-UP                     -->
+  <!-- ─────────────────────────────────────────────── -->
+
+  <div id="roundSelector">
+    <label for="roundInput">Target Rounds:</label>
+    <input type="number" id="roundInput" min="1" max="30" placeholder="1-30" />
+    <span id="roundStatus"></span>
+  </div>
+
+  <h1>4-7-8 Breathing Exercise</h1>
+  <div id="timer">Elapsed Time: 0m 0s</div>
+  <div id="circle"></div>
+  <div id="instruction">Press Start to Begin</div>
+  <div id="progress" style="margin-top: 20px; display: flex; gap: 5px;"></div>
+
+  <div class="buttons">
+    <button id="startBtn" onclick="startBreathing()">Start</button>
+    <button onclick="stopBreathing()">Stop</button>
+    <button id="soundToggle" onclick="toggleSound()" aria-label="Toggle Sound">🔊</button>
+  </div>
+
+  <!-- ── audio clips (unchanged) ──────────────────── -->
+  <audio id="backgroundMusic" loop>
+    <source src="https://github.com/vikram-available/breathing-audio/raw/refs/heads/main/calm-ambient-background-2-351472.mp3" type="audio/mp3" />
+  </audio>
+  <audio id="chimeInhale">
+    <source src="https://github.com/vikram-available/breathing-audio/raw/refs/heads/main/242374__ascap__mallet-hit-low-glass-bowl-5.mp3" type="audio/mp3" />
+  </audio>
+  <audio id="chimeHold">
+    <source src="https://github.com/vikram-available/breathing-audio/raw/refs/heads/main/12866__schluppipuppie__ping-05.wav" type="audio/wav" />
+  </audio>
+  <audio id="chimeExhale">
+    <source src="https://github.com/vikram-available/breathing-audio/raw/refs/heads/main/547695__pbimal__ghantee-01.flac" type="audio/flac" />
+  </audio>
+  <audio id="breathInhale">
+    <source src="https://github.com/vikram-available/breathing-audio/raw/refs/heads/main/814807__applesimmer__deep-sniffing-smelling-huffing-1-of-2.wav" type="audio/wav" />
+  </audio>
+  <audio id="breathExhale">
+    <source src="https://github.com/vikram-available/breathing-audio/raw/refs/heads/main/237376__squareal__breathing-out.wav" type="audio/wav" />
+  </audio>
+
+  <!-- ── webcam wrapper (video + canvas) ──────────── -->
+  <div style="position: relative; width: 320px; height: 240px">
+    <video id="webcam" autoplay muted playsinline></video>
+    <!-- canvas injected by faceDetection.js -->
+  </div>
+
+  <!-- ─────────────────────────────────────────────── -->
+  <!--                  SCRIPTS                        -->
+  <!-- ─────────────────────────────────────────────── -->
+
+  <!-- 1️⃣  face-api UMD build (global `faceapi`) -->
+  <script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
+
+  <!-- 2️⃣  face / emotion detection (adds overlay canvas) -->
+  <script src="js/faceDetection.js"></script>
+
+  <!-- 3️⃣  your original breathing exercise logic -->
+  <script src="js/main.js"></script>
+</body>
+</html>
